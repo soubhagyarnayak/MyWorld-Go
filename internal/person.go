@@ -4,12 +4,12 @@ import (
 	"database/sql"
 	"fmt"
 
-	_ "github.com/lib/pq"
+	_ "github.com/lib/pq" // no-lint
 	"github.com/spf13/viper"
 )
 
 type Person struct {
-	Id              int
+	ID              int
 	Name            string
 	Description     string
 	Email           string
@@ -26,12 +26,12 @@ func GetPersons() ([]Person, error) {
 	driver := viper.GetString("DB_DRIVER")
 	db, err := sql.Open(driver, connectionString)
 	if err != nil {
-		return nil, err
+		return nil, fmt.Errorf("failed to open connection to database with error:%w", err)
 	}
 	defer db.Close()
 	rows, err := db.Query("SELECT Id, Name FROM Person")
 	if err != nil {
-		return nil, err
+		return nil, fmt.Errorf("failed to query from database with error:%w", err)
 	}
 	defer rows.Close()
 
@@ -41,13 +41,13 @@ func GetPersons() ([]Person, error) {
 	for rows.Next() {
 		err := rows.Scan(&id, &name)
 		if err != nil {
-			return nil, err
+			return nil, fmt.Errorf("failed to scan next row with error:%w", err)
 		}
-		person := Person{Id: id, Name: name}
+		person := Person{ID: id, Name: name}
 		persons = append(persons, person)
 	}
 	if err := rows.Err(); err != nil {
-		return nil, fmt.Errorf("the cursor gave error:%v", err)
+		return nil, fmt.Errorf("the cursor gave error:%w", err)
 	}
 	return persons, nil
 }

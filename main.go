@@ -8,12 +8,12 @@ import (
 )
 
 func main() {
-	init_config()
+	initConfig()
 	service := internal.Service{}
 	service.Run()
 }
 
-func init_config() {
+func initConfig() {
 	viper.SetConfigFile(".env")
 	err := viper.ReadInConfig()
 	if err != nil {
